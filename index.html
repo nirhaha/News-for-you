@@ -74,12 +74,12 @@
             padding: 1rem;
         }
         .news-item h3 {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             color: #333;
             margin-bottom: 0.5rem;
         }
         .news-item h4 {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             color: #666;
             margin-bottom: 0.5rem;
         }
@@ -89,17 +89,24 @@
         }
         .main-news {
             grid-column: 1 / -1;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-news h3 {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+        }
+        .main-news-content {
+            display: flex;
         }
         .main-news img {
+            width: 40%;
             aspect-ratio: 1 / 1;
             object-fit: cover;
         }
-        .main-news h3 {
-            font-size: 2rem;
-            margin-top: -3rem;
-            margin-bottom: 1rem;
-            padding: 1rem;
-            background-color: rgba(255,255,255,0.8);
+        .main-news-text {
+            width: 60%;
+            padding-right: 1rem;
         }
         .secondary-news img {
             aspect-ratio: 1 / 1;
@@ -134,8 +141,22 @@
             #news-content {
                 grid-template-columns: 1fr;
             }
+            .main-news h3 {
+                text-align: right;
+                line-height: 1.2;
+                margin-bottom: 0.5rem;
+            }
+            .main-news-content {
+                flex-direction: column;
+            }
+            .main-news img, .main-news-text {
+                width: 100%;
+            }
             .secondary-news, .tertiary-news {
                 grid-column: 1 / -1;
+            }
+            .secondary-news img, .tertiary-news img {
+                aspect-ratio: 16 / 9;
             }
             .tertiary-news {
                 flex-direction: column;
@@ -227,37 +248,38 @@
                 
                 if (index === 0) {
                     article.classList.add('main-news');
+                    article.innerHTML = `
+                        <h3>${item.title || 'No Title'}</h3>
+                        <div class="main-news-content">
+                            <img src="${item.image_base_1x1}" alt="${item.title || 'News Image'}">
+                            <div class="main-news-text">
+                                <h4>${item.summary || ''}</h4>
+                                <p>${item.description || ''}</p>
+                            </div>
+                        </div>
+                    `;
                 } else if (index === 1 || index === 2) {
                     article.classList.add('secondary-news');
+                    article.innerHTML = `
+                        <img src="${item.image_base_1x1}" alt="${item.title || 'News Image'}">
+                        <div class="news-item-content">
+                            <h3>${item.title || 'No Title'}</h3>
+                            <h4>${item.summary || ''}</h4>
+                            <p>${item.description || ''}</p>
+                        </div>
+                    `;
                 } else {
                     article.classList.add('tertiary-news');
+                    article.innerHTML = `
+                        <img src="${item.image_base_16x9}" alt="${item.title || 'News Image'}">
+                        <div class="news-item-content">
+                            <h3>${item.title || 'No Title'}</h3>
+                            <h4>${item.summary || ''}</h4>
+                            <p>${item.description || ''}</p>
+                        </div>
+                    `;
                 }
 
-                const image = document.createElement('img');
-                image.src = index === 0 || index === 1 || index === 2 ? item.image_base_1x1 : item.image_base_16x9;
-                image.alt = item.title || 'News Image';
-                article.appendChild(image);
-
-                const content = document.createElement('div');
-                content.className = 'news-item-content';
-
-                const title = document.createElement('h3');
-                title.textContent = item.title || 'No Title';
-                content.appendChild(title);
-
-                if (item.summary) {
-                    const summary = document.createElement('h4');
-                    summary.textContent = item.summary;
-                    content.appendChild(summary);
-                }
-
-                if (item.description) {
-                    const description = document.createElement('p');
-                    description.textContent = item.description;
-                    content.appendChild(description);
-                }
-
-                article.appendChild(content);
                 newsContent.appendChild(article);
             });
         }
