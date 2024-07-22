@@ -5,21 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>News For You</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
-            background-color: #f0f0f0;
-        }
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
+            margin: 0;
             padding: 20px;
+            background-color: #f0f0f0;
         }
         header {
             background: #0066cc;
@@ -28,99 +19,51 @@
             text-align: center;
             margin-bottom: 20px;
         }
-        h1 {
-            margin-bottom: 0.5rem;
-            font-size: 2rem;
-        }
-        h2 {
-            font-size: 1.2rem;
-            font-weight: normal;
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
         }
         #style-selection {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            padding: 1rem 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
         }
         .style-button {
-            padding: 0.8rem;
-            font-size: 0.9rem;
+            padding: 10px;
             background-color: #0066cc;
-            color: #ffffff;
+            color: white;
             border: none;
-            border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s, transform 0.1s;
-        }
-        .style-button:hover {
-            background-color: #004499;
-        }
-        .style-button:active {
-            transform: scale(0.98);
-        }
-        #news-content {
-            display: none;
         }
         .news-item {
-            background: #ffffff;
-            margin-bottom: 2rem;
-            padding: 1rem;
+            background: white;
+            margin-bottom: 20px;
+            padding: 20px;
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-        }
-        .news-item h3 {
-            color: #0066cc;
-            margin-bottom: 1rem;
-            font-size: 1.4rem;
-        }
-        .news-item .content-wrapper {
-            display: flex;
-            gap: 1rem;
         }
         .news-item img {
-            width: 40%;
+            max-width: 100%;
             height: auto;
-            border-radius: 5px;
-            object-fit: cover;
+            margin-bottom: 10px;
         }
-        .news-item .text-content {
-            flex: 1;
-        }
-        .news-item p {
-            margin-bottom: 0.5rem;
-        }
-        #loading {
-            display: none;
-            text-align: center;
-            font-weight: bold;
+        #debug-info {
+            background-color: #ffcccc;
+            padding: 10px;
             margin-top: 20px;
-        }
-        #error-message {
-            color: red;
-            font-weight: bold;
-            margin-top: 1rem;
-        }
-        @media (max-width: 768px) {
-            .news-item .content-wrapper {
-                flex-direction: column;
-            }
-            .news-item img {
-                width: 100%;
-                margin-bottom: 1rem;
-            }
+            border: 1px solid #ff0000;
         }
     </style>
 </head>
 <body>
-    <header id="main-header">
+    <header>
         <h1>מה הכי מתאר אותך?</h1>
         <h2>נתאים את החדשות במיוחד בשבילך</h2>
     </header>
     
-    <main class="container">
-        <section id="style-selection">
+    <div class="container">
+        <div id="style-selection">
             <button class="style-button" data-style="curious-child">ילד בן 10 סקרן</button>
             <button class="style-button" data-style="tel-aviv-elitist">אליטיסט תל אביבי</button>
             <button class="style-button" data-style="worried-grandmother">סבתא דאגנית</button>
@@ -131,19 +74,20 @@
             <button class="style-button" data-style="slick-politician">פוליטיקאי חלקלק</button>
             <button class="style-button" data-style="startup-programmer">מתכנת סטארט-אפ</button>
             <button class="style-button" data-style="bibi-supporter">ביביסט מערוץ 14</button>
-        </section>
+        </div>
 
-        <div id="loading">טוען נתונים...</div>
-        <section id="news-content"></section>
+        <div id="loading" style="display: none;">טוען נתונים...</div>
+        <div id="news-content"></div>
         <div id="error-message"></div>
-    </main>
+        <div id="debug-info"></div>
+    </div>
 
     <script>
         const styleSelection = document.getElementById('style-selection');
         const newsContent = document.getElementById('news-content');
         const errorMessage = document.getElementById('error-message');
         const loadingIndicator = document.getElementById('loading');
-        const mainHeader = document.getElementById('main-header');
+        const debugInfo = document.getElementById('debug-info');
 
         const styleMap = {
             'curious-child': 'curious-child-news-json.json',
@@ -160,7 +104,6 @@
 
         styleSelection.addEventListener('click', (e) => {
             if (e.target.classList.contains('style-button')) {
-                console.log('Button clicked:', e.target.textContent);
                 const style = e.target.dataset.style;
                 loadNewsData(styleMap[style]);
                 errorMessage.textContent = '';
@@ -169,35 +112,28 @@
         });
 
         function loadNewsData(jsonFile) {
-            console.log('Loading news data from:', jsonFile);
             loadingIndicator.style.display = 'block';
             errorMessage.textContent = '';
+            debugInfo.textContent = '';
             
             fetch(jsonFile)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.text();
-                })
+                .then(response => response.text())
                 .then(text => {
-                    console.log('Received data:', text);
+                    debugInfo.textContent = `Raw JSON data: ${text.substring(0, 100)}...`;
                     let data;
                     try {
-                        text = text.trim();
                         if (text.startsWith('processNewsData(')) {
                             const jsonText = text.slice(16, -1);
                             data = JSON.parse(jsonText);
                         } else {
                             data = JSON.parse(text);
                         }
-                        console.log('Parsed data:', data);
                         if (Array.isArray(data)) {
-                            processNewsData(data);
+                            displayNews(data);
                         } else if (typeof data === 'object' && data !== null) {
                             const arrayData = Object.values(data).find(val => Array.isArray(val));
                             if (arrayData) {
-                                processNewsData(arrayData);
+                                displayNews(arrayData);
                             } else {
                                 throw new Error('No array found in data');
                             }
@@ -205,80 +141,51 @@
                             throw new Error('Data is not in the expected format');
                         }
                     } catch (error) {
-                        console.error('Error parsing JSON:', error);
                         errorMessage.textContent = 'שגיאה בעיבוד קובץ החדשות: ' + error.message;
                         loadingIndicator.style.display = 'none';
                     }
                 })
                 .catch(error => {
-                    console.error('Error loading or parsing JSON:', error);
-                    errorMessage.textContent = 'שגיאה בטעינת או עיבוד קובץ החדשות: ' + error.message;
+                    errorMessage.textContent = 'שגיאה בטעינת קובץ החדשות: ' + error.message;
                     loadingIndicator.style.display = 'none';
                 });
         }
 
-        function processNewsData(data) {
-            console.log('processNewsData called with:', data);
-            loadingIndicator.style.display = 'none';
-            if (Array.isArray(data) && data.length > 0) {
-                console.log('Valid news data received, displaying news');
-                displayNews(data);
-            } else {
-                console.error('Invalid news data received');
-                errorMessage.textContent = 'שגיאה: התקבלו נתוני חדשות לא תקינים.';
-            }
-        }
-
         function displayNews(newsItems) {
-            console.log('Displaying news items:', newsItems);
-            styleSelection.style.display = 'none';
-            mainHeader.style.display = 'none';
-            newsContent.style.display = 'block';
+            loadingIndicator.style.display = 'none';
             newsContent.innerHTML = '';
+            debugInfo.textContent += `\nNumber of news items: ${newsItems.length}`;
 
             newsItems.forEach((item, index) => {
-                console.log('Creating article for item:', item);
                 const article = document.createElement('article');
                 article.className = 'news-item';
 
                 const title = document.createElement('h3');
-                title.textContent = item.Title;
+                title.textContent = item.Title || 'No Title';
                 article.appendChild(title);
-
-                const contentWrapper = document.createElement('div');
-                contentWrapper.className = 'content-wrapper';
 
                 if (item.image_base_16x9 || item.image_base_1x1) {
                     const image = document.createElement('img');
                     image.src = index === 0 ? item.image_base_16x9 : item.image_base_1x1;
-                    image.alt = item.Title;
-                    contentWrapper.appendChild(image);
+                    image.alt = item.Title || 'News Image';
+                    article.appendChild(image);
                 }
 
-                const textContent = document.createElement('div');
-                textContent.className = 'text-content';
-
-                if (item.Summary) {
-                    const summary = document.createElement('p');
-                    summary.textContent = item.Summary;
-                    textContent.appendChild(summary);
-                }
+                const summary = document.createElement('p');
+                summary.textContent = item.Summary || 'No Summary';
+                article.appendChild(summary);
 
                 if (item.Description) {
                     const description = document.createElement('p');
                     description.textContent = item.Description;
-                    textContent.appendChild(description);
+                    article.appendChild(description);
                 }
 
-                contentWrapper.appendChild(textContent);
-                article.appendChild(contentWrapper);
                 newsContent.appendChild(article);
             });
 
-            console.log('News content updated');
+            debugInfo.textContent += `\nNews content updated. Check if text is visible.`;
         }
-
-        console.log('Script loaded');
     </script>
 </body>
 </html>
