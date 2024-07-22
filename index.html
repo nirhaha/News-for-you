@@ -13,18 +13,20 @@
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
-            background-color: #f4f4f4;
+            background-color: #f0f0f0;
         }
         .container {
-            width: 80%;
+            width: 90%;
+            max-width: 1200px;
             margin: 0 auto;
-            overflow: hidden;
+            padding: 20px;
         }
         header {
             background: #0066cc;
             color: #ffffff;
             padding: 1rem;
             text-align: center;
+            margin-bottom: 20px;
         }
         h1 {
             margin-bottom: 0.5rem;
@@ -36,13 +38,13 @@
         }
         #style-selection {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 1rem;
-            padding: 2rem 0;
+            padding: 1rem 0;
         }
         .style-button {
-            padding: 1rem;
-            font-size: 1rem;
+            padding: 0.8rem;
+            font-size: 0.9rem;
             background-color: #0066cc;
             color: #ffffff;
             border: none;
@@ -65,18 +67,27 @@
             padding: 1rem;
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: grid;
+            grid-template-columns: 2fr 3fr;
+            gap: 1rem;
         }
         .news-item h3 {
             color: #0066cc;
             margin-bottom: 0.5rem;
+            font-size: 1.4rem;
+            grid-column: 1 / -1;
         }
         .news-item img {
             width: 100%;
             height: auto;
-            margin-bottom: 1rem;
+            border-radius: 5px;
+        }
+        .news-item .content {
+            display: flex;
+            flex-direction: column;
         }
         .news-item p {
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
         }
         #loading {
             display: none;
@@ -90,10 +101,7 @@
             margin-top: 1rem;
         }
         @media (max-width: 768px) {
-            .container {
-                width: 95%;
-            }
-            #style-selection {
+            .news-item {
                 grid-template-columns: 1fr;
             }
         }
@@ -167,29 +175,20 @@
                     return response.text();
                 })
                 .then(text => {
-                    console.log('Received data:', text);  // Log the entire response
+                    console.log('Received data:', text);
                     let data;
                     try {
-                        // Remove any leading/trailing whitespace
                         text = text.trim();
-                        
-                        // Check if the text starts with 'processNewsData('
                         if (text.startsWith('processNewsData(')) {
-                            // Extract the JSON part
-                            const jsonText = text.slice(16, -1);  // Remove 'processNewsData(' and ')'
+                            const jsonText = text.slice(16, -1);
                             data = JSON.parse(jsonText);
                         } else {
-                            // Try to parse as regular JSON
                             data = JSON.parse(text);
                         }
-                        
-                        console.log('Parsed data:', data);  // Log the parsed data
-                        
-                        // Ensure data is in the correct format
+                        console.log('Parsed data:', data);
                         if (Array.isArray(data)) {
                             processNewsData(data);
                         } else if (typeof data === 'object' && data !== null) {
-                            // If it's an object, try to find an array property
                             const arrayData = Object.values(data).find(val => Array.isArray(val));
                             if (arrayData) {
                                 processNewsData(arrayData);
@@ -227,7 +226,7 @@
         function displayNews(newsItems) {
             console.log('Displaying news items:', newsItems);
             styleSelection.style.display = 'none';
-            mainHeader.style.display = 'none';  // Hide the main header
+            mainHeader.style.display = 'none';
             newsContent.style.display = 'block';
             newsContent.innerHTML = '';
 
@@ -240,25 +239,32 @@
                 title.textContent = item.Title;
                 article.appendChild(title);
 
+                const imageContainer = document.createElement('div');
+                imageContainer.className = 'image-container';
                 if (item.image_base_16x9 || item.image_base_1x1) {
                     const image = document.createElement('img');
                     image.src = index === 0 ? item.image_base_16x9 : item.image_base_1x1;
                     image.alt = item.Title;
-                    article.appendChild(image);
+                    imageContainer.appendChild(image);
                 }
+                article.appendChild(imageContainer);
+
+                const contentContainer = document.createElement('div');
+                contentContainer.className = 'content';
 
                 if (item.Summary) {
                     const summary = document.createElement('p');
                     summary.textContent = item.Summary;
-                    article.appendChild(summary);
+                    contentContainer.appendChild(summary);
                 }
 
                 if (item.Description) {
                     const description = document.createElement('p');
                     description.textContent = item.Description;
-                    article.appendChild(description);
+                    contentContainer.appendChild(description);
                 }
 
+                article.appendChild(contentContainer);
                 newsContent.appendChild(article);
             });
 
