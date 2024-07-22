@@ -100,7 +100,7 @@
     </style>
 </head>
 <body>
-    <header>
+    <header id="main-header">
         <h1>מה הכי מתאר אותך?</h1>
         <h2>נתאים את החדשות במיוחד בשבילך</h2>
     </header>
@@ -129,6 +129,7 @@
         const newsContent = document.getElementById('news-content');
         const errorMessage = document.getElementById('error-message');
         const loadingIndicator = document.getElementById('loading');
+        const mainHeader = document.getElementById('main-header');
 
         const styleMap = {
             'curious-child': 'curious-child-news-json.json',
@@ -226,6 +227,7 @@
         function displayNews(newsItems) {
             console.log('Displaying news items:', newsItems);
             styleSelection.style.display = 'none';
+            mainHeader.style.display = 'none';  // Hide the main header
             newsContent.style.display = 'block';
             newsContent.innerHTML = '';
 
@@ -249,7 +251,7 @@
                 summary.textContent = item.Summary;
                 article.appendChild(summary);
 
-                if (index === 0 && item.Description) {
+                if (item.Description) {
                     const description = document.createElement('p');
                     description.textContent = item.Description;
                     article.appendChild(description);
