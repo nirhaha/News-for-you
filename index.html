@@ -5,72 +5,144 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>News For You</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
-            margin: 0;
-            padding: 20px;
             background-color: #f0f0f0;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
         }
         header {
             background: #0066cc;
             color: #ffffff;
-            padding: 1rem;
+            padding: 2rem;
             text-align: center;
             margin-bottom: 20px;
         }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        h2 {
+            font-size: 1.5rem;
+            font-weight: normal;
         }
         #style-selection {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
         .style-button {
-            padding: 10px;
+            padding: 1rem;
+            font-size: 1rem;
             background-color: #0066cc;
-            color: white;
+            color: #ffffff;
             border: none;
-            cursor: pointer;
             border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
         .style-button:hover {
             background-color: #004080;
         }
+        #news-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
         .news-item {
             background: white;
-            margin-bottom: 20px;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         .news-item img {
-            max-width: 100%;
+            width: 100%;
             height: auto;
-            margin-bottom: 15px;
-            border-radius: 5px;
+            display: block;
         }
-        .news-item h2 {
-            font-size: 24px;
-            color: #0066cc;
-            margin-bottom: 10px;
+        .news-item-content {
+            padding: 1rem;
         }
         .news-item h3 {
-            font-size: 18px;
+            font-size: 1.5rem;
             color: #333;
-            margin-bottom: 10px;
+            margin-bottom: 0.5rem;
+        }
+        .news-item h4 {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 0.5rem;
         }
         .news-item p {
-            font-size: 16px;
-            color: #666;
+            font-size: 1rem;
+            color: #777;
+        }
+        .main-news {
+            grid-column: 1 / -1;
+        }
+        .main-news img {
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+        }
+        .main-news h3 {
+            font-size: 2rem;
+            margin-top: -3rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background-color: rgba(255,255,255,0.8);
+        }
+        .secondary-news img {
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+        }
+        .tertiary-news {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+        }
+        .tertiary-news img {
+            width: 40%;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+        }
+        .tertiary-news .news-item-content {
+            width: 60%;
         }
         #loading {
             text-align: center;
             font-weight: bold;
             margin-top: 20px;
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+            }
+            #style-selection {
+                grid-template-columns: 1fr 1fr;
+            }
+            #news-content {
+                grid-template-columns: 1fr;
+            }
+            .secondary-news, .tertiary-news {
+                grid-column: 1 / -1;
+            }
+            .tertiary-news {
+                flex-direction: column;
+            }
+            .tertiary-news img, .tertiary-news .news-item-content {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -94,7 +166,7 @@
             <button class="style-button" data-style="bibi-supporter">ביביסט מערוץ 14</button>
         </div>
 
-        <div id="loading" style="display: none;">טוען נתונים...</div>
+        <div id="loading">טוען נתונים...</div>
         <div id="news-content"></div>
     </div>
 
@@ -152,30 +224,40 @@
             newsItems.forEach((item, index) => {
                 const article = document.createElement('article');
                 article.className = 'news-item';
-
-                if (item.image_base_16x9 || item.image_base_1x1) {
-                    const image = document.createElement('img');
-                    image.src = index === 0 ? item.image_base_16x9 : item.image_base_1x1;
-                    image.alt = item.title || 'News Image';
-                    article.appendChild(image);
+                
+                if (index === 0) {
+                    article.classList.add('main-news');
+                } else if (index === 1 || index === 2) {
+                    article.classList.add('secondary-news');
+                } else {
+                    article.classList.add('tertiary-news');
                 }
 
-                const title = document.createElement('h2');
+                const image = document.createElement('img');
+                image.src = index === 0 || index === 1 || index === 2 ? item.image_base_1x1 : item.image_base_16x9;
+                image.alt = item.title || 'News Image';
+                article.appendChild(image);
+
+                const content = document.createElement('div');
+                content.className = 'news-item-content';
+
+                const title = document.createElement('h3');
                 title.textContent = item.title || 'No Title';
-                article.appendChild(title);
+                content.appendChild(title);
 
                 if (item.summary) {
-                    const summary = document.createElement('h3');
+                    const summary = document.createElement('h4');
                     summary.textContent = item.summary;
-                    article.appendChild(summary);
+                    content.appendChild(summary);
                 }
 
                 if (item.description) {
                     const description = document.createElement('p');
                     description.textContent = item.description;
-                    article.appendChild(description);
+                    content.appendChild(description);
                 }
 
+                article.appendChild(content);
                 newsContent.appendChild(article);
             });
         }
