@@ -131,7 +131,53 @@
     </div>
 
     <script>
-        // JavaScript code will be added here for dynamic content loading
+        document.addEventListener('DOMContentLoaded', function() {
+            const styleButtons = document.querySelectorAll('#style-selection button');
+            const loadingElement = document.getElementById('loading');
+            const newsContentElement = document.getElementById('news-content');
+
+            styleButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const style = this.textContent.trim();
+                    loadNews(style);
+                });
+            });
+
+            function loadNews(style) {
+                loadingElement.style.display = 'block';
+                newsContentElement.innerHTML = '';
+
+                // Simulating API call with setTimeout
+                setTimeout(() => {
+                    fetch(`data/${style}.json`)
+                        .then(response => response.json())
+                        .then(data => {
+                            renderNews(data);
+                            loadingElement.style.display = 'none';
+                        })
+                        .catch(error => {
+                            console.error('Error loading news:', error);
+                            loadingElement.style.display = 'none';
+                            newsContentElement.innerHTML = '<p>Error loading news. Please try again.</p>';
+                        });
+                }, 1000); // Simulating 1 second loading time
+            }
+
+            function renderNews(newsItems) {
+                newsItems.forEach(item => {
+                    const newsItemElement = document.createElement('div');
+                    newsItemElement.classList.add('news-item');
+                    newsItemElement.innerHTML = `
+                        <img src="${item.image}" alt="${item.title}">
+                        <div class="news-item-content">
+                            <h3>${item.title}</h3>
+                            <p>${item.description}</p>
+                        </div>
+                    `;
+                    newsContentElement.appendChild(newsItemElement);
+                });
+            }
+        });
     </script>
 </body>
 </html>
