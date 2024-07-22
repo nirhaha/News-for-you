@@ -35,6 +35,10 @@
             color: white;
             border: none;
             cursor: pointer;
+            border-radius: 5px;
+        }
+        .style-button:hover {
+            background-color: #004080;
         }
         .news-item {
             background: white;
@@ -46,18 +50,32 @@
         .news-item img {
             max-width: 100%;
             height: auto;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+        .news-item h2 {
+            font-size: 24px;
+            color: #0066cc;
             margin-bottom: 10px;
         }
-        #debug-info {
-            background-color: #ffcccc;
-            padding: 10px;
+        .news-item h3 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .news-item p {
+            font-size: 16px;
+            color: #666;
+        }
+        #loading {
+            text-align: center;
+            font-weight: bold;
             margin-top: 20px;
-            border: 1px solid #ff0000;
         }
     </style>
 </head>
 <body>
-    <header>
+    <header id="main-header">
         <h1>מה הכי מתאר אותך?</h1>
         <h2>נתאים את החדשות במיוחד בשבילך</h2>
     </header>
@@ -78,16 +96,13 @@
 
         <div id="loading" style="display: none;">טוען נתונים...</div>
         <div id="news-content"></div>
-        <div id="error-message"></div>
-        <div id="debug-info"></div>
     </div>
 
     <script>
         const styleSelection = document.getElementById('style-selection');
         const newsContent = document.getElementById('news-content');
-        const errorMessage = document.getElementById('error-message');
         const loadingIndicator = document.getElementById('loading');
-        const debugInfo = document.getElementById('debug-info');
+        const mainHeader = document.getElementById('main-header');
 
         const styleMap = {
             'curious-child': 'curious-child-news-json.json',
@@ -106,20 +121,16 @@
             if (e.target.classList.contains('style-button')) {
                 const style = e.target.dataset.style;
                 loadNewsData(styleMap[style]);
-                errorMessage.textContent = '';
                 loadingIndicator.style.display = 'block';
             }
         });
 
         function loadNewsData(jsonFile) {
             loadingIndicator.style.display = 'block';
-            errorMessage.textContent = '';
-            debugInfo.textContent = '';
             
             fetch(jsonFile)
                 .then(response => response.json())
                 .then(data => {
-                    debugInfo.textContent = `Loaded data title: ${data.title}`;
                     if (data.entry && Array.isArray(data.entry)) {
                         displayNews(data.entry);
                     } else {
@@ -127,23 +138,20 @@
                     }
                 })
                 .catch(error => {
-                    errorMessage.textContent = 'שגיאה בטעינת קובץ החדשות: ' + error.message;
+                    console.error('Error loading news data:', error);
                     loadingIndicator.style.display = 'none';
                 });
         }
 
         function displayNews(newsItems) {
             loadingIndicator.style.display = 'none';
+            styleSelection.style.display = 'none';
+            mainHeader.style.display = 'none';
             newsContent.innerHTML = '';
-            debugInfo.textContent += `\nNumber of news items: ${newsItems.length}`;
 
             newsItems.forEach((item, index) => {
                 const article = document.createElement('article');
                 article.className = 'news-item';
-
-                const title = document.createElement('h3');
-                title.textContent = item.title || 'No Title';
-                article.appendChild(title);
 
                 if (item.image_base_16x9 || item.image_base_1x1) {
                     const image = document.createElement('img');
@@ -152,9 +160,15 @@
                     article.appendChild(image);
                 }
 
-                const summary = document.createElement('p');
-                summary.textContent = item.summary || 'No Summary';
-                article.appendChild(summary);
+                const title = document.createElement('h2');
+                title.textContent = item.title || 'No Title';
+                article.appendChild(title);
+
+                if (item.summary) {
+                    const summary = document.createElement('h3');
+                    summary.textContent = item.summary;
+                    article.appendChild(summary);
+                }
 
                 if (item.description) {
                     const description = document.createElement('p');
@@ -164,8 +178,6 @@
 
                 newsContent.appendChild(article);
             });
-
-            debugInfo.textContent += `\nNews content updated. Check if text is visible.`;
         }
     </script>
 </body>
