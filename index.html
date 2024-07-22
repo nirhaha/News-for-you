@@ -5,102 +5,193 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>News For You</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.4;
             background-color: #f0f0f0;
         }
-        #main-header {
-            background-color: #003366;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        #main-header h1 {
-            margin: 0;
-            font-size: 2.5em;
-        }
-        #main-header h2 {
-            margin: 10px 0 0;
-            font-size: 1.2em;
-            font-weight: normal;
-        }
         .container {
-            max-width: 1200px;
+            width: 80%;
             margin: 0 auto;
             padding: 20px;
         }
-        #style-selection {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
+        header {
+            background: linear-gradient(135deg, #0066cc, #004080);
+            color: #ffffff;
+            padding: 2rem;
+            text-align: center;
             margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        #style-selection button {
-            padding: 10px 20px;
-            font-size: 1em;
-            background-color: #4CAF50;
-            color: white;
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #ffd700; /* מוסיף צבע זהב לכותרת הראשית */
+        }
+        h2 {
+            font-size: 1.5rem;
+            font-weight: normal;
+        }
+        #style-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .style-button {
+            padding: 1rem;
+            font-size: 1rem;
+            background-color: #4CAF50; /* שינוי צבע הכפתורים לירוק */
+            color: #ffffff;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.2s;
         }
-        #style-selection button:hover {
+        .style-button:hover {
             background-color: #45a049;
-        }
-        #loading {
-            text-align: center;
-            font-size: 1.2em;
-            margin: 20px 0;
-            display: none;
+            transform: translateY(-2px);
         }
         #news-content {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
         }
         .news-item {
-            background-color: white;
-            border-radius: 5px;
+            background: white;
+            border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .news-item:hover {
+            transform: translateY(-5px);
         }
         .news-item img {
             width: 100%;
-            height: 200px;
-            object-fit: cover;
+            height: auto;
+            display: block;
         }
         .news-item-content {
-            padding: 15px;
+            padding: 1rem;
         }
         .news-item h3 {
-            margin: 0 0 10px;
-            font-size: 1.2em;
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        .news-item h4 {
+            font-size: 1.4rem;
+            color: #666;
+            margin-bottom: 0.5rem;
         }
         .news-item p {
-            margin: 0;
-            font-size: 0.9em;
-            line-height: 1.4;
+            font-size: 1rem;
+            color: #777;
+        }
+        .main-news {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+        }
+        .main-news h3 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        .main-news-content {
+            display: flex;
+            gap: 2rem;
+        }
+        .main-news img {
+            width: 75%;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+        }
+        .main-news-text {
+            width: 25%;
+        }
+        .main-news h4 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+        .secondary-news img, .tertiary-news img {
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+        }
+        .tertiary-news {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+        }
+        .tertiary-news img {
+            width: 40%;
+        }
+        .tertiary-news .news-item-content {
+            width: 60%;
+        }
+        #loading {
+            text-align: center;
+            font-weight: bold;
+            margin-top: 20px;
+            display: none;
         }
         @media (max-width: 768px) {
-            #main-header h1 {
-                font-size: 2em;
+            .container {
+                width: 95%;
+                padding: 10px;
             }
-            #main-header h2 {
-                font-size: 1em;
+            #style-selection {
+                grid-template-columns: 1fr 1fr;
             }
-            #style-selection button {
-                font-size: 0.9em;
-                padding: 8px 16px;
+            #news-content {
+                grid-template-columns: 1fr;
             }
-            .news-item:first-child h3 {
-                font-size: 1.8em; /* Significantly larger title for the main story */
+            .main-news {
+                padding: 0.5rem;
+            }
+            .main-news h3 {
+                font-size: 3.2rem; /* הגדלת גודל הכותרת הראשית */
+                margin-bottom: 0.5rem;
+            }
+            .main-news-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .main-news img {
+                width: 100%;
+                aspect-ratio: 1 / 1;
+            }
+            .main-news-text {
+                width: 100%;
+            }
+            .main-news h4 {
+                font-size: 1.5rem;
+            }
+            .secondary-news, .tertiary-news {
+                grid-column: 1 / -1;
+            }
+            .news-item h3 {
+                font-size: 1.6rem;
+                margin-top: 0.25rem;
             }
             .news-item-content {
-                line-height: 1.2; /* Reduced line spacing for all text */
+                padding: 0.75rem;
+            }
+            .tertiary-news {
+                flex-direction: column;
+            }
+            .tertiary-news img, .tertiary-news .news-item-content {
+                width: 100%;
+            }
+            .news-item p {
+                line-height: 1.2; /* צמצום הרווחים בין השורות */
             }
         }
     </style>
@@ -110,74 +201,117 @@
         <h1>מה הכי מתאר אותך?</h1>
         <h2>נתאים את החדשות במיוחד בשבילך</h2>
     </header>
-
+    
     <div class="container">
         <div id="style-selection">
-            <button>ילד בן 10 סקרן</button>
-            <button>אליטיסט תל אביבי</button>
-            <button>סבתא דאגנית</button>
-            <button>ערס אחושרמוטה</button>
-            <button>עולה חדש מבולבל</button>
-            <button>בחור ישיבה חרדי</button>
-            <button>קונספירטור</button>
-            <button>פוליטיקאי חלקלק</button>
-            <button>מתכנת סטארט-אפ</button>
-            <button>ביביסט מערוץ 14</button>
+            <button class="style-button" data-style="curious-child">ילד בן 10 סקרן</button>
+            <button class="style-button" data-style="tel-aviv-elitist">אליטיסט תל אביבי</button>
+            <button class="style-button" data-style="worried-grandmother">סבתא דאגנית</button>
+            <button class="style-button" data-style="ars">ערס אחושרמוטה</button>
+            <button class="style-button" data-style="confused-immigrant">עולה חדש מבולבל</button>
+            <button class="style-button" data-style="haredi-yeshiva">בחור ישיבה חרדי</button>
+            <button class="style-button" data-style="conspirator">קונספירטור</button>
+            <button class="style-button" data-style="slick-politician">פוליטיקאי חלקלק</button>
+            <button class="style-button" data-style="startup-programmer">מתכנת סטארט-אפ</button>
+            <button class="style-button" data-style="bibi-supporter">ביביסט מערוץ 14</button>
         </div>
 
         <div id="loading">טוען נתונים...</div>
-
         <div id="news-content"></div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const styleButtons = document.querySelectorAll('#style-selection button');
-            const loadingElement = document.getElementById('loading');
-            const newsContentElement = document.getElementById('news-content');
+        const styleSelection = document.getElementById('style-selection');
+        const newsContent = document.getElementById('news-content');
+        const loadingIndicator = document.getElementById('loading');
+        const mainHeader = document.getElementById('main-header');
 
-            styleButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const style = this.textContent.trim();
-                    loadNews(style);
-                });
-            });
+        const styleMap = {
+            'curious-child': 'curious-child-news-json.json',
+            'tel-aviv-elitist': 'tel-aviv-elitist-news-json.json',
+            'worried-grandmother': 'worried-grandmother-news-json.json',
+            'ars': 'ars-news-json.json',
+            'confused-immigrant': 'confused-immigrant-news-json.json',
+            'haredi-yeshiva': 'haredi-yeshiva-news-json.json',
+            'conspirator': 'conspirator-news-json.json',
+            'slick-politician': 'slick-politician-news-json.json',
+            'startup-programmer': 'startup-programmer-json.json',
+            'bibi-supporter': 'bibi-supporter-news-json.json'
+        };
 
-            function loadNews(style) {
-                loadingElement.style.display = 'block';
-                newsContentElement.innerHTML = '';
-
-                // Simulating API call with setTimeout
-                setTimeout(() => {
-                    fetch(`data/${style}.json`)
-                        .then(response => response.json())
-                        .then(data => {
-                            renderNews(data);
-                            loadingElement.style.display = 'none';
-                        })
-                        .catch(error => {
-                            console.error('Error loading news:', error);
-                            loadingElement.style.display = 'none';
-                            newsContentElement.innerHTML = '<p>Error loading news. Please try again.</p>';
-                        });
-                }, 1000); // Simulating 1 second loading time
-            }
-
-            function renderNews(newsItems) {
-                newsItems.forEach(item => {
-                    const newsItemElement = document.createElement('div');
-                    newsItemElement.classList.add('news-item');
-                    newsItemElement.innerHTML = `
-                        <img src="${item.image}" alt="${item.title}">
-                        <div class="news-item-content">
-                            <h3>${item.title}</h3>
-                            <p>${item.description}</p>
-                        </div>
-                    `;
-                    newsContentElement.appendChild(newsItemElement);
-                });
+        styleSelection.addEventListener('click', (e) => {
+            if (e.target.classList.contains('style-button')) {
+                const style = e.target.dataset.style;
+                loadNewsData(styleMap[style]);
+                loadingIndicator.style.display = 'block';
             }
         });
+
+        function loadNewsData(jsonFile) {
+            loadingIndicator.style.display = 'block';
+            
+            fetch(jsonFile)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.entry && Array.isArray(data.entry)) {
+                        displayNews(data.entry);
+                    } else {
+                        throw new Error('Invalid data structure');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading news data:', error);
+                    loadingIndicator.style.display = 'none';
+                });
+        }
+
+        function displayNews(newsItems) {
+            loadingIndicator.style.display = 'none';
+            styleSelection.style.display = 'none';
+            mainHeader.style.display = 'none';
+            newsContent.innerHTML = '';
+
+            newsItems.forEach((item, index) => {
+                const article = document.createElement('article');
+                article.className = 'news-item';
+                
+                if (index === 0) {
+                    article.classList.add('main-news');
+                    article.innerHTML = `
+                        <h3>${item.title || 'No Title'}</h3>
+                        <div class="main-news-content">
+                            <img src="${item.image_base_16x9}" alt="${item.title || 'News Image'}">
+                            <div class="main-news-text">
+                                <h4>${item.summary || ''}</h4>
+                                <p>${item.description || ''}</p>
+                            </div>
+                        </div>
+                    `;
+                } else if (index === 1 || index === 2) {
+                    article.classList.add('secondary-news');
+                    article.innerHTML = `
+                        <img src="${item.image_base_16x9}" alt="${item.title || 'News Image'}">
+                        <div class="news-item-content">
+                            <h3>${item.title || 'No Title'}</h3>
+                            <h4>${item.summary || ''}</h4>
+                            <p>${item.description || ''}</p>
+                        </div>
+                    `;
+                } else {
+                    article.classList.add('tertiary-news');
+                    article.innerHTML = `
+                        <img src="${item.image_base_16x9}" alt="${item.title || 'News Image'}">
+                        <div class="news-item-content">
+                            <h3>${item.title || 'No Title'}</h3>
+                            <h4>${item.summary || ''}</h4>
+                            <p>${item.description || ''}</p>
+                        </div>
+                    `;
+                }
+
+                newsContent.appendChild(article);
+            });
+        }
     </script>
 </body>
 </html>
