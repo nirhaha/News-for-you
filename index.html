@@ -117,32 +117,13 @@
             debugInfo.textContent = '';
             
             fetch(jsonFile)
-                .then(response => response.text())
-                .then(text => {
-                    debugInfo.textContent = `Raw JSON data: ${text.substring(0, 100)}...`;
-                    let data;
-                    try {
-                        if (text.startsWith('processNewsData(')) {
-                            const jsonText = text.slice(16, -1);
-                            data = JSON.parse(jsonText);
-                        } else {
-                            data = JSON.parse(text);
-                        }
-                        if (Array.isArray(data)) {
-                            displayNews(data);
-                        } else if (typeof data === 'object' && data !== null) {
-                            const arrayData = Object.values(data).find(val => Array.isArray(val));
-                            if (arrayData) {
-                                displayNews(arrayData);
-                            } else {
-                                throw new Error('No array found in data');
-                            }
-                        } else {
-                            throw new Error('Data is not in the expected format');
-                        }
-                    } catch (error) {
-                        errorMessage.textContent = 'שגיאה בעיבוד קובץ החדשות: ' + error.message;
-                        loadingIndicator.style.display = 'none';
+                .then(response => response.json())
+                .then(data => {
+                    debugInfo.textContent = `Loaded data title: ${data.title}`;
+                    if (data.entry && Array.isArray(data.entry)) {
+                        displayNews(data.entry);
+                    } else {
+                        throw new Error('Invalid data structure');
                     }
                 })
                 .catch(error => {
@@ -161,23 +142,23 @@
                 article.className = 'news-item';
 
                 const title = document.createElement('h3');
-                title.textContent = item.Title || 'No Title';
+                title.textContent = item.title || 'No Title';
                 article.appendChild(title);
 
                 if (item.image_base_16x9 || item.image_base_1x1) {
                     const image = document.createElement('img');
                     image.src = index === 0 ? item.image_base_16x9 : item.image_base_1x1;
-                    image.alt = item.Title || 'News Image';
+                    image.alt = item.title || 'News Image';
                     article.appendChild(image);
                 }
 
                 const summary = document.createElement('p');
-                summary.textContent = item.Summary || 'No Summary';
+                summary.textContent = item.summary || 'No Summary';
                 article.appendChild(summary);
 
-                if (item.Description) {
+                if (item.description) {
                     const description = document.createElement('p');
-                    description.textContent = item.Description;
+                    description.textContent = item.description;
                     article.appendChild(description);
                 }
 
