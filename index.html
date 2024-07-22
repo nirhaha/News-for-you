@@ -31,7 +31,7 @@
         h1 {
             font-size: 2.5rem;
             margin-bottom: 0.5rem;
-            color: #ffd700; /* מוסיף צבע זהב לכותרת הראשית */
+            color: #ffd700;
         }
         h2 {
             font-size: 1.5rem;
@@ -46,7 +46,7 @@
         .style-button {
             padding: 1rem;
             font-size: 1rem;
-            background-color: #4CAF50; /* שינוי צבע הכפתורים לירוק */
+            background-color: #4CAF50;
             color: #ffffff;
             border: none;
             border-radius: 5px;
@@ -157,8 +157,9 @@
                 padding: 0.5rem;
             }
             .main-news h3 {
-                font-size: 3.2rem; /* הגדלת גודל הכותרת הראשית */
+                font-size: 3.2rem;
                 margin-bottom: 0.5rem;
+                font-weight: bold;
             }
             .main-news-content {
                 flex-direction: column;
@@ -172,7 +173,11 @@
                 width: 100%;
             }
             .main-news h4 {
-                font-size: 1.5rem;
+                font-size: 2.25rem; /* Increased by 50% from 1.5rem */
+                font-weight: bold;
+            }
+            .main-news p {
+                font-size: 1.5rem; /* Increased by 50% from 1rem */
             }
             .secondary-news, .tertiary-news {
                 grid-column: 1 / -1;
@@ -180,6 +185,10 @@
             .news-item h3 {
                 font-size: 1.6rem;
                 margin-top: 0.25rem;
+                font-weight: bold;
+            }
+            .news-item h4 {
+                font-weight: bold;
             }
             .news-item-content {
                 padding: 0.75rem;
@@ -191,7 +200,7 @@
                 width: 100%;
             }
             .news-item p {
-                line-height: 1.2; /* צמצום הרווחים בין השורות */
+                line-height: 1.2;
             }
         }
     </style>
