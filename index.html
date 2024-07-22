@@ -169,17 +169,35 @@
                     console.log('Received data:', text);  // Log the entire response
                     let data;
                     try {
+                        // Remove any leading/trailing whitespace
+                        text = text.trim();
+                        
+                        // Check if the text starts with 'processNewsData('
                         if (text.startsWith('processNewsData(')) {
+                            // Extract the JSON part
                             const jsonText = text.slice(16, -1);  // Remove 'processNewsData(' and ')'
                             data = JSON.parse(jsonText);
                         } else {
+                            // Try to parse as regular JSON
                             data = JSON.parse(text);
                         }
+                        
                         console.log('Parsed data:', data);  // Log the parsed data
-                        if (!Array.isArray(data) || data.length === 0) {
-                            throw new Error('Data is not an array or is empty');
+                        
+                        // Ensure data is in the correct format
+                        if (Array.isArray(data)) {
+                            processNewsData(data);
+                        } else if (typeof data === 'object' && data !== null) {
+                            // If it's an object, try to find an array property
+                            const arrayData = Object.values(data).find(val => Array.isArray(val));
+                            if (arrayData) {
+                                processNewsData(arrayData);
+                            } else {
+                                throw new Error('No array found in data');
+                            }
+                        } else {
+                            throw new Error('Data is not in the expected format');
                         }
-                        processNewsData(data);
                     } catch (error) {
                         console.error('Error parsing JSON:', error);
                         errorMessage.textContent = 'שגיאה בעיבוד קובץ החדשות: ' + error.message;
