@@ -156,6 +156,7 @@
         function loadNewsData(jsonFile) {
             console.log('Loading news data from:', jsonFile);
             loadingIndicator.style.display = 'block';
+            errorMessage.textContent = '';
             
             fetch(jsonFile)
                 .then(response => {
@@ -165,15 +166,25 @@
                     return response.text();
                 })
                 .then(text => {
-                    console.log('Received data:', text.substring(0, 100) + '...'); // Log the first 100 characters
+                    console.log('Received data:', text);  // Log the entire response
                     let data;
-                    if (text.startsWith('processNewsData(')) {
-                        const jsonText = text.slice(16, -1); // Remove 'processNewsData(' and ')'
-                        data = JSON.parse(jsonText);
-                    } else {
-                        data = JSON.parse(text);
+                    try {
+                        if (text.startsWith('processNewsData(')) {
+                            const jsonText = text.slice(16, -1);  // Remove 'processNewsData(' and ')'
+                            data = JSON.parse(jsonText);
+                        } else {
+                            data = JSON.parse(text);
+                        }
+                        console.log('Parsed data:', data);  // Log the parsed data
+                        if (!Array.isArray(data) || data.length === 0) {
+                            throw new Error('Data is not an array or is empty');
+                        }
+                        processNewsData(data);
+                    } catch (error) {
+                        console.error('Error parsing JSON:', error);
+                        errorMessage.textContent = 'שגיאה בעיבוד קובץ החדשות: ' + error.message;
+                        loadingIndicator.style.display = 'none';
                     }
-                    processNewsData(data);
                 })
                 .catch(error => {
                     console.error('Error loading or parsing JSON:', error);
