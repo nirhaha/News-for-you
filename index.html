@@ -247,9 +247,11 @@
                     article.appendChild(image);
                 }
 
-                const summary = document.createElement('p');
-                summary.textContent = item.Summary;
-                article.appendChild(summary);
+                if (item.Summary) {
+                    const summary = document.createElement('p');
+                    summary.textContent = item.Summary;
+                    article.appendChild(summary);
+                }
 
                 if (item.Description) {
                     const description = document.createElement('p');
